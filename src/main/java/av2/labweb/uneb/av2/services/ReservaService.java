@@ -48,7 +48,19 @@ public class ReservaService {
     }
 
     public Reserva atualizarReserva(Long id, Reserva novaReserva) {
-        return novaReserva;
+        return this.reservaRepository.findById(id)
+            .map(recordFound -> {
+                if(verificaConflitoDeHorario(novaReserva, id)){
+                    throw new IllegalArgumentException("Horário indisponível.");
+                }
+
+                recordFound.setPeriodo(90);
+                recordFound.setDataHora(novaReserva.getDataHora());
+                recordFound.setResponsavel(novaReserva.getResponsavel());
+                recordFound.setSala(novaReserva.getSala());
+                return this.reservaRepository.save(recordFound);
+            })
+            .orElseThrow(() -> new IllegalArgumentException("Sala não encontrada"));
     }
 
     public List<Map<String, Object>> gerarRelatorio() {
