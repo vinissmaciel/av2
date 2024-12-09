@@ -64,7 +64,19 @@ public class ReservaService {
     }
 
     public List<Map<String, Object>> gerarRelatorio() {
-        return null;
+        List<Object[]> r = this.reservaRepository.gerarRelatorio();
+        List<Map<String, Object>> relatorio = new ArrayList<>();
+
+        for(Object[] r1: r){
+            relatorio.add(
+                Map.of(
+                    "nomeSala", r1[0],
+                    "totalReservas", r1[1]
+                )
+            );
+        }
+        
+        return relatorio;
     }
 
     public boolean verificaConflitoDeHorario(Reserva novaReserva, Long idAtual) {
